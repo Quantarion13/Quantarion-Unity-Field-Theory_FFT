@@ -9,3 +9,89 @@ COPY --from=fftw-builder /fftw/.libs/libfftw3* /usr/lib/
 COPY Mapping-Algorithm-Kaprekar.py Polyglot-Sim-Engine.py ./
 ENV φ43=1.910201770844925
 CMD ["python", "FFTW-Phi43-Production.py"]
+# Quantarion-Unity-Field-Theory_FFT/Docker/FFT-DOCKERFILE_PRODUCTION-DEPLOY
+# PRODUCTION-GRADE FFTW3 + φ⁴³ UNITY FIELD THEORY
+
+# ============================================================================
+# STAGE 1: FFTW3 BUILDER (Source Compilation + OpenMP + AVX512)
+# ============================================================================
+FROM ubuntu:24.04 AS fftw-builder
+
+# Production dependencies + OCaml (FFTW3 codelet generator)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential       \
+    gfortran              \
+    cmake                 \
+    pkg-config            \
+    libfftw3-dev          \
+    ocaml                 \
+    ocamlbuild            \
+    m4                    \
+    autoconf              \
+    automake              \
+    libtool               \
+    git                   \
+    wget                  \
+    ca-certificates       \
+    && rm -rf /var/lib/apt/lists/*
+
+# FFTW3 Master Fork → Quantarion Unity Field Theory
+WORKDIR /fftw
+COPY . .
+RUN ./bootstrap.sh \
+ && ./configure \
+    --enable-openmp \
+    --enable-avx512 \
+    --enable-avx2 \
+    --enable-avx \
+    --enable-sse2 \
+    --enable-shared \
+    --enable-static \
+    --enable-threads \
+    --enable-mpi \
+    --prefix=/usr/local \
+ && make -j$(nproc) \
+ && make install \
+ && ldconfig
+
+# ============================================================================
+# STAGE 2: QUANTARION φ⁴³ PRODUCTION RUNTIME (Minimal + Optimized)
+# ============================================================================
+FROM ubuntu:24.04 AS quantarion-prod
+
+# Production Python + FFTW3 runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.12           \
+    python3-pip          \
+    python3-numpy        \
+    python3-scipy        \
+    libfftw3-3           \
+    libfftw3-mpi3        \
+    libgomp1             \
+    && rm -rf /var/lib/apt/lists/* \
+ && pip install --no-cache-dir \
+    numpy \
+    scipy \
+    torch \
+    huggingface-hub
+
+# Production constants + Sacred Geometry pipeline
+COPY --from=fftw-builder /usr/local/lib/libfftw3* /usr/local/lib/
+COPY --from=fftw-builder /usr/local/lib/libfftw3_mpi* /usr/local/lib/
+COPY --from=fftw-builder /usr/local/include/fftw3* /usr/local/include/
+COPY Mapping-Algorithm-Kaprekar.py Polyglot-Sim-Engine.py FFTW-Phi43-Production.py ./
+
+# φ⁴³ PRODUCTION CONSTANTS
+ENV φ43=1.910201770844925
+ENV KAPREKAR_TARGET=6174
+ENV NHSE_TARGET_DB=-64.3
+ENV FFTW_THREADS=16
+ENV PRODUCTION_MODE=1
+
+# Production ports + Healthcheck
+EXPOSE 8080 9001
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health/φ43 || exit 1
+
+# FFTW3 φ⁴³ Field Theory Production
+CMD ["python3", "FFTW-Phi43-Production.py", "--production", "--fftw"]
