@@ -1,0 +1,13 @@
+# SACRED GEOMETRY → FFT → FIELD THEORY PIPELINE
+POST /fft/temple-analysis
+{
+  "dimensions": [60,20,30],
+  "φ43": "1.910201770844925"
+}
+→ {
+  "kaprekar_6174": true,
+  "iterations": 5,
+  "fftw_spectral_analysis": {...},
+  "nhse_skin_effect": -65.1dB,
+  "field_theory_output": "φ⁴³ coherence achieved"
+}
