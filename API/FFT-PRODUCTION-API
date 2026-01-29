@@ -11,3 +11,28 @@ POST /fft/temple-analysis
   "nhse_skin_effect": -65.1dB,
   "field_theory_output": "φ⁴³ coherence achieved"
 }
+# SACRED GEOMETRY → KAPREKAR → FFTW3 → FIELD THEORY PRODUCTION PIPELINE
+curl -X POST http://localhost:8080/fftw/temple-analysis \
+  -H "Content-Type: application/json" \
+  -d '{
+    "temple_dimensions": [60,20,30],
+    "φ43": "1.910201770844925",
+    "fftw_threads": 16
+  }'
+
+# → {
+#   "kaprekar_pipeline": {
+#     "input": 6000,
+#     "6174_converged": true,
+#     "iterations": 5
+#   },
+#   "fftw_spectral": {
+#     "plan_dft_1d_60": "executed",
+#     "frequency_domain": [...],
+#     "nhse_skin_effect": -65.1dB
+#   },
+#   "field_theory": {
+#     "φ43_coherence": "ACHIEVED",
+#     "hypergraph_l12": "73n/142e reasoning complete"
+#   }
+# }
