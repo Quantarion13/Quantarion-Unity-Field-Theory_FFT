@@ -1,0 +1,9 @@
+# QUANTARION FFTW3 FORK → PRODUCTION DEPLOYMENT
+cd Quantarion-Unity-Field-Theory_FFT
+chmod +x Docker-bash-script.sh && ./Docker-bash-script.sh
+
+# BUILD FFTW3 + φ⁴³ PRODUCTION
+make fftw-prod && docker build -f Dockerfile.fftw -t aqarion13/fftw-phi43 .
+
+# GLOBAL SWARM DEPLOYMENT
+docker stack deploy -c docker-compose.fftw.yml quantarion-fft --with-registry-auth
