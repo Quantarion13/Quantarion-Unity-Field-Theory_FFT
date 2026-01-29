@@ -1,0 +1,11 @@
+# Quantarion-Unity-Field-Theory_FFT/Dockerfile.fftw
+FROM ubuntu:24.04 AS fftw-builder
+RUN apt-get update && apt-get install -y build-essential gfortran libfftw3-dev
+COPY . /fftw
+RUN cd /fftw && ./bootstrap.sh && ./configure --enable-openmp && make -j$(nproc)
+
+FROM ubuntu:24.04 AS quantarion-prod
+COPY --from=fftw-builder /fftw/.libs/libfftw3* /usr/lib/
+COPY Mapping-Algorithm-Kaprekar.py Polyglot-Sim-Engine.py ./
+ENV φ43=1.910201770844925
+CMD ["python", "FFTW-Phi43-Production.py"]
